@@ -1,4 +1,4 @@
-public class Main {
+public class Solution {
     public static int canBeTypedWords(String text, String brokenLetters) {
         boolean[] broken = new boolean[26];
         for (char c : brokenLetters.toCharArray()) {
