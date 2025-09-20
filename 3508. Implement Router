@@ -1,0 +1,78 @@
+class Router {
+
+    int cap;
+    Set<String> set;
+    List<int[]> list;
+    Map<Integer,List<Integer>> dt;
+    public Router(int memoryLimit) {
+        cap = memoryLimit;
+        list = new LinkedList<>();
+        set = new HashSet<>();
+        dt = new HashMap<>();
+    }
+    
+    public boolean addPacket(int source, int destination, int timestamp) {
+        String key = source+"_"+destination+"_"+timestamp;
+        if(!set.add(key)) return false;
+        if(list.size() == cap) forwardPacket();
+        list.add(new int[]{source,destination,timestamp});
+        dt.putIfAbsent(destination,new ArrayList<>());
+        dt.get(destination).add(timestamp);
+        return true;
+    }
+    
+    public int[] forwardPacket() {
+        if(list.isEmpty()) return new int[0];
+        int temp[] = list.removeFirst();
+        String key = temp[0]+"_"+temp[1]+"_"+temp[2];
+        dt.get(temp[1]).remove(0);
+        set.remove(key);
+        return temp;
+    }
+
+    public int getCount(int destination, int startTime, int endTime) {
+        List<Integer> searchList = dt.get(destination);
+        if(searchList == null || searchList.isEmpty()) return 0;
+        int l = lowerBound(startTime,searchList);
+        int r = upperBound(endTime,searchList);
+        return r - l;
+    }
+
+    private int lowerBound(int key,List<Integer> sl){
+        int l = 0;
+        int r = sl.size()-1;
+
+        while(l<=r){
+            int mid = (r+l)/2;
+            if(sl.get(mid) < key) {
+                l = mid+1;
+            } else {
+                r = mid-1;
+            }
+        }
+        return l;
+    }
+
+    private int upperBound(int key,List<Integer> sl){
+        int l = 0;
+        int r = sl.size()-1;
+
+        while(l<=r){
+            int mid = (r+l)/2;
+            if(sl.get(mid) <= key){
+                l = mid+1;
+            } else {
+                r = mid-1;
+            }
+        }
+        return l;
+    }
+}
+
+/**
+ * Your Router object will be instantiated and called as such:
+ * Router obj = new Router(memoryLimit);
+ * boolean param_1 = obj.addPacket(source,destination,timestamp);
+ * int[] param_2 = obj.forwardPacket();
+ * int param_3 = obj.getCount(destination,startTime,endTime);
+ */
