@@ -1,0 +1,15 @@
+class Solution {
+    public int finalValueAfterOperations(String[] operations) {
+        int finalValue = 0;
+        for(String operation : operations){
+            if("X++".equals(operation)){
+                finalValue ++;
+            }else if("++X".equals(operation)){
+                finalValue ++;
+            }else{
+                finalValue --;
+            }
+        }
+        return finalValue;
+    }
+}
